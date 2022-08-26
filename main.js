@@ -135,6 +135,40 @@ function hitBoxCollision({box1, box2}) {
     
 }
 
+function whoWins({player, enemy, timerID}) {
+    clearTimeout(timerID)
+    document.querySelector("#displayText").style.display = "flex"
+    if (player.health > enemy.health) {
+        console.log("Player 1 WINS")
+        document.querySelector("#displayText").innerHTML = "PLAYER 1 WINS"
+        
+    }
+    if (enemy.health > player.health) {
+        console.log("Player 2 WINS")
+        document.querySelector("#displayText").innerHTML = "PLAYER 2 WINS"
+    }
+    if (enemy.health == player.health) {
+        document.querySelector("#displayText").innerHTML = "TIE"
+    }
+}
+
+
+let timer = 60
+let timerID 
+function decrementTimer() {
+    if (timer > 0) {
+        timerID = setTimeout(decrementTimer, 1000)
+        timer--
+        document.querySelector("#clockTimer").innerHTML = timer
+    }
+
+    if (timer === 0) {
+        whoWins({player, enemy})
+    }
+}
+
+decrementTimer()
+
 function gameLoop() { 
     window.requestAnimationFrame(gameLoop)
     c.fillStyle = 'black'
@@ -172,6 +206,14 @@ function gameLoop() {
         document.querySelector("#playerHealth").style.width = player.health + "%"
         enemy.isAttacking = false
     }
+
+    //game over:
+    if (enemy.health <= 0 || player.health <= 0) {
+        whoWins({player, enemy, timerID})
+
+    }
+
+
 }
 
 gameLoop() //creates an infinite loop of each animation frame 
