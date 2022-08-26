@@ -8,8 +8,6 @@ c.fillRect(0, 0, canvas.width, canvas.height)
 const GRAVITY = 0.8
 
 
-
-
 class Sprite { 
     constructor({position, velocity,color, offset}) { 
         this.position = position
@@ -18,6 +16,7 @@ class Sprite {
         this.WIDTH = 50
         this.color = color;
         this.lastKey // used to find out the last key used for fluid movement mechanics
+        this.health = 100
         this.attackArea = { 
             position: {
                 x: this.position.x,
@@ -161,13 +160,16 @@ function gameLoop() {
 
     //Collision Detection for enemy
     if (hitBoxCollision({box1: player, box2: enemy}) && player.isAttacking) {
-        console.log("HIT - enemy");
+        enemy.health -= 10
+        document.querySelector("#enemyHealth").style.width = enemy.health + "%"
         player.isAttacking = false
     }
 
     //Collision Detection for player
     if (hitBoxCollision({box1: enemy, box2: player}) && enemy.isAttacking) {
         console.log("HIT - player");
+        player.health -= 10
+        document.querySelector("#playerHealth").style.width = player.health + "%"
         enemy.isAttacking = false
     }
 }
