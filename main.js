@@ -7,22 +7,45 @@ canvas.height = 720
 c.fillRect(0, 0, canvas.width, canvas.height)
 const GRAVITY = 0.8
 
+
+
+
 class Sprite { 
-    constructor({position, velocity}) { 
+    constructor({position, velocity,color, offset}) { 
         this.position = position
         this.velocity = velocity
         this.HEIGHT = 150
         this.WIDTH = 50
+        this.color = color;
         this.lastKey // used to find out the last key used for fluid movement mechanics
+        this.attackArea = { 
+            position: {
+                x: this.position.x,
+                y: this.position.y
+            },
+            offset,
+            width: 80,
+            height: 50
+        }
+        this.isAttacking
     }
 
     draw() {
-        c.fillStyle = 'blue'
+        c.fillStyle = this.color;
         c.fillRect(this.position.x, this.position.y, this.WIDTH, this.HEIGHT)
+        
+
+        if (this.isAttacking) {
+        c.fillStyle = "yellow"
+        c.fillRect(this.attackArea.position.x, this.attackArea.position.y, this.attackArea.width, this.attackArea.height)
+        }
     }
 
     update() {
         this.draw()
+
+        this.attackArea.position.x = this.position.x + this.attackArea.offset.x
+        this.attackArea.position.y = this.position.y
         
         this.position.x += this.velocity.x 
         this.position.y += this.velocity.y
@@ -32,6 +55,16 @@ class Sprite {
         } else {
             this.velocity.y += GRAVITY
         }
+
+ 
+
+        
+    }
+    attack () {
+        this.isAttacking = true 
+        setTimeout(() => {
+            this.isAttacking = false
+        }, 300)
     }
 }
 
@@ -43,6 +76,11 @@ const player = new Sprite({
     velocity: {
         x:0,
         y:0
+    },
+    color: "blue",
+    offset: {
+        x: 0,
+        y: 0
     }
 })
 
@@ -54,6 +92,11 @@ const enemy = new Sprite({
     velocity: {
         x:0,
         y:0
+    },
+    color: "red",
+    offset: {
+        x: -30,
+        y: 0
     }
 })
 
@@ -83,7 +126,15 @@ const keys = {
  
 
 
-
+function hitBoxCollision({box1, box2}) {
+    return (
+    box1.attackArea.position.x  + box1.attackArea.width  >= box2.position.x
+    && box1.attackArea.position.x  <= box2.position.x + box2.WIDTH
+    && box1.attackArea.position.y + box1.attackArea.height >= enemy.position.y
+    && box1.attackArea.position.y <= box2.position.y + box2.HEIGHT
+           )
+    
+}
 
 function gameLoop() { 
     window.requestAnimationFrame(gameLoop)
@@ -106,6 +157,18 @@ function gameLoop() {
         enemy.velocity.x = -1 
     } else if (keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight') {
         enemy.velocity.x = 1
+    }
+
+    //Collision Detection for enemy
+    if (hitBoxCollision({box1: player, box2: enemy}) && player.isAttacking) {
+        console.log("HIT - enemy");
+        player.isAttacking = false
+    }
+
+    //Collision Detection for player
+    if (hitBoxCollision({box1: enemy, box2: player}) && enemy.isAttacking) {
+        console.log("HIT - player");
+        enemy.isAttacking = false
     }
 }
 
@@ -134,6 +197,12 @@ window.addEventListener('keydown', (event) => {
             break
         case 'ArrowUp': // jump P2
             enemy.velocity.y = -18
+            break
+        case ' ':
+            player.attack()
+            break
+        case 'l':
+            enemy.attack()
             break
     }
 })
