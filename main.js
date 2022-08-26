@@ -7,67 +7,9 @@ canvas.height = 720
 c.fillRect(0, 0, canvas.width, canvas.height)
 const GRAVITY = 0.8
 
+const background = new Sprite({position: {x: 0, y: 0}, img: "assets/background.png"})
 
-class Sprite { 
-    constructor({position, velocity,color, offset}) { 
-        this.position = position
-        this.velocity = velocity
-        this.HEIGHT = 150
-        this.WIDTH = 50
-        this.color = color;
-        this.lastKey // used to find out the last key used for fluid movement mechanics
-        this.health = 100
-        this.attackArea = { 
-            position: {
-                x: this.position.x,
-                y: this.position.y
-            },
-            offset,
-            width: 80,
-            height: 50
-        }
-        this.isAttacking
-    }
-
-    draw() {
-        c.fillStyle = this.color;
-        c.fillRect(this.position.x, this.position.y, this.WIDTH, this.HEIGHT)
-        
-
-        if (this.isAttacking) {
-        c.fillStyle = "yellow"
-        c.fillRect(this.attackArea.position.x, this.attackArea.position.y, this.attackArea.width, this.attackArea.height)
-        }
-    }
-
-    update() {
-        this.draw()
-
-        this.attackArea.position.x = this.position.x + this.attackArea.offset.x
-        this.attackArea.position.y = this.position.y
-        
-        this.position.x += this.velocity.x 
-        this.position.y += this.velocity.y
-        
-        if (this.position.y + this.HEIGHT + this.velocity.y >= canvas.height) {
-            this.velocity.y = 0
-        } else {
-            this.velocity.y += GRAVITY
-        }
-
- 
-
-        
-    }
-    attack () {
-        this.isAttacking = true 
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 300)
-    }
-}
-
-const player = new Sprite({
+const player = new fighter({
     position: {
         x:0,
         y:0
@@ -83,7 +25,7 @@ const player = new Sprite({
     }
 })
 
-const enemy = new Sprite({
+const enemy = new fighter({
     position: {
         x:200,
         y:0
@@ -122,57 +64,13 @@ const keys = {
     }
 }
 
- 
-
-
-function hitBoxCollision({box1, box2}) {
-    return (
-    box1.attackArea.position.x  + box1.attackArea.width  >= box2.position.x
-    && box1.attackArea.position.x  <= box2.position.x + box2.WIDTH
-    && box1.attackArea.position.y + box1.attackArea.height >= enemy.position.y
-    && box1.attackArea.position.y <= box2.position.y + box2.HEIGHT
-           )
-    
-}
-
-function whoWins({player, enemy, timerID}) {
-    clearTimeout(timerID)
-    document.querySelector("#displayText").style.display = "flex"
-    if (player.health > enemy.health) {
-        console.log("Player 1 WINS")
-        document.querySelector("#displayText").innerHTML = "PLAYER 1 WINS"
-        
-    }
-    if (enemy.health > player.health) {
-        console.log("Player 2 WINS")
-        document.querySelector("#displayText").innerHTML = "PLAYER 2 WINS"
-    }
-    if (enemy.health == player.health) {
-        document.querySelector("#displayText").innerHTML = "TIE"
-    }
-}
-
-
-let timer = 60
-let timerID 
-function decrementTimer() {
-    if (timer > 0) {
-        timerID = setTimeout(decrementTimer, 1000)
-        timer--
-        document.querySelector("#clockTimer").innerHTML = timer
-    }
-
-    if (timer === 0) {
-        whoWins({player, enemy})
-    }
-}
-
 decrementTimer()
 
 function gameLoop() { 
     window.requestAnimationFrame(gameLoop)
     c.fillStyle = 'black'
     c.fillRect(0, 0, canvas.width, canvas.height) // clear the canvas every loop frame 
+    background.update()
     player.update()
     enemy.update()
 
