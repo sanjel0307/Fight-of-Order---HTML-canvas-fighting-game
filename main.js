@@ -76,17 +76,17 @@ function gameLoop() {
 
     //Player Movement
     player.velocity.x = 0
-    if (keys.a.pressed && player.lastKey == 'a') {
+    if (keys.a.pressed && player.lastKey == 'a' && player.position.x > 0) {
         player.velocity.x = -1 
-    } else if (keys.d.pressed && player.lastKey == 'd') {
+    } else if (keys.d.pressed && player.lastKey == 'd' && player.position.x + player.WIDTH < canvas.width)  {
         player.velocity.x = 1
     }
 
     //Enemy Movement
     enemy.velocity.x = 0
-    if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft') {
+    if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft' && enemy.position.x > 0) {
         enemy.velocity.x = -1 
-    } else if (keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight') {
+    } else if (keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight' && enemy.position.x + enemy.WIDTH < canvas.width) {
         enemy.velocity.x = 1
     }
 
@@ -127,8 +127,10 @@ window.addEventListener('keydown', (event) => {
             player.lastKey = 'a'
             break
         case 'w': // jump P1
-            player.velocity.y = -18
-            break
+            if (player.velocity.y === 0) { // prevent player from spamming Jump
+                player.velocity.y = -18
+                break
+            }
         case 'ArrowRight': // right P2 
             keys.ArrowRight.pressed = true
             enemy.lastKey = 'ArrowRight'
@@ -138,8 +140,9 @@ window.addEventListener('keydown', (event) => {
             enemy.lastKey = 'ArrowLeft'
             break
         case 'ArrowUp': // jump P2
+            if (enemy.velocity.y === 0) {
             enemy.velocity.y = -18
-            break
+            break}
         case ' ':
             player.attack()
             break

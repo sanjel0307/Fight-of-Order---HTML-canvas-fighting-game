@@ -1,19 +1,43 @@
 class Sprite { 
-    constructor({position, img}) { 
+    constructor({position, img, scale = 1, maxFrames = 1}) { 
         this.position = position
         this.HEIGHT = 150
         this.WIDTH = 50
         this.image = new Image()
         this.image.src = img
+        this.scale = scale
+        this.maxFrames = maxFrames
+        this.currentFrame = 0
+        this.frameCount = 0 
+        this.frameHold = 10
     }
 
     draw() {
-        c.drawImage(this.image, this.position.x, this.position.y)
-        
+        c.drawImage(
+            this.image, 
+            this.currentFrame * (this.image.width / this.maxFrames), 
+            0, 
+            this.image.width / this.maxFrames, 
+            this.image.height, 
+            this.position.x, 
+            this.position.y, 
+            (this.image.width / this.maxFrames) * this.scale, 
+            this.image.height * this.scale)
+
     }
 
     update() {
         this.draw() 
+        this.frameCount++
+
+        if (this.frameCount % this.frameHold === 0) {
+            if (this.currentFrame < this.maxFrames - 1) {
+                this.currentFrame ++
+            }
+            else {
+                this.currentFrame = 0
+            }
+        }
     }
 
 }
