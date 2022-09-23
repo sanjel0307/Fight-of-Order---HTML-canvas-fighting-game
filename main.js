@@ -22,6 +22,24 @@ const player = new fighter({
     offset: {
         x: 0,
         y: 0
+    },
+    img: "./assets/Skeleton/idle.png",
+    maxFrames: 4,
+    scale: 2,
+    offset: {
+        x: 100,
+        y: 125
+    },
+    sprites: {
+        idle: {
+            img:"./assets/Skeleton/idle.png",
+            maxFrames: 4
+        },
+
+        walk: {
+            img:"./assets/Skeleton/walk.png",
+            maxFrames: 4
+        }
     }
 })
 
@@ -72,20 +90,26 @@ function gameLoop() {
     c.fillRect(0, 0, canvas.width, canvas.height) // clear the canvas every loop frame 
     background.update()
     player.update()
-    enemy.update()
+    //enemy.update()
 
     //Player Movement
     player.velocity.x = 0
+
+    player.image = player.sprites.idle.image
     if (keys.a.pressed && player.lastKey == 'a' && player.position.x > 0) {
-        player.velocity.x = -1 
+        player.velocity.x = -1
+        player.image = player.sprites.walk.image
+
     } else if (keys.d.pressed && player.lastKey == 'd' && player.position.x + player.WIDTH < canvas.width)  {
         player.velocity.x = 1
+        player.image = player.sprites.walk.image
     }
 
     //Enemy Movement
     enemy.velocity.x = 0
     if (keys.ArrowLeft.pressed && enemy.lastKey == 'ArrowLeft' && enemy.position.x > 0) {
         enemy.velocity.x = -1 
+
     } else if (keys.ArrowRight.pressed && enemy.lastKey == 'ArrowRight' && enemy.position.x + enemy.WIDTH < canvas.width) {
         enemy.velocity.x = 1
     }

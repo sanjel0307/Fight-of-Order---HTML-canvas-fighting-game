@@ -1,5 +1,5 @@
 class Sprite { 
-    constructor({position, img, scale = 1, maxFrames = 1}) { 
+    constructor({position, img, scale = 1, maxFrames = 1, offset = {x:0, y:0}}) { 
         this.position = position
         this.HEIGHT = 150
         this.WIDTH = 50
@@ -10,6 +10,7 @@ class Sprite {
         this.currentFrame = 0
         this.frameCount = 0 
         this.frameHold = 10
+        this.offset = offset
     }
 
     draw() {
@@ -19,15 +20,14 @@ class Sprite {
             0, 
             this.image.width / this.maxFrames, 
             this.image.height, 
-            this.position.x, 
-            this.position.y, 
+            this.position.x - this.offset.x, 
+            this.position.y - this.offset.y, 
             (this.image.width / this.maxFrames) * this.scale, 
             this.image.height * this.scale)
 
     }
 
-    update() {
-        this.draw() 
+    animateFrame() {  
         this.frameCount++
 
         if (this.frameCount % this.frameHold === 0) {
@@ -40,11 +40,16 @@ class Sprite {
         }
     }
 
+    update() {
+        this.draw() 
+        this.animateFrame()
+    }
+
 }
 
-class fighter { 
-    constructor({position, velocity,color, offset}) { 
-        this.position = position
+class fighter extends Sprite { 
+    constructor({position, velocity,color,  img, scale = 1, maxFrames = 1, offset = {x:0, y:0}, sprites}) {
+        super({img, scale, maxFrames, position, offset}) 
         this.velocity = velocity
         this.HEIGHT = 150
         this.WIDTH = 50
@@ -61,22 +66,24 @@ class fighter {
             height: 50
         }
         this.isAttacking
-    }
+        this.currentFrame = 0
+        this.frameCount = 0 
+        this.frameHold = 15
+        this.sprites = sprites
 
-    draw() {
-        c.fillStyle = this.color;
-        c.fillRect(this.position.x, this.position.y, this.WIDTH, this.HEIGHT)
-        
-
-        if (this.isAttacking) {
-        c.fillStyle = "yellow"
-        c.fillRect(this.attackArea.position.x, this.attackArea.position.y, this.attackArea.width, this.attackArea.height)
+        for (const sprite in this.sprites) {
+            sprites[sprite].image = new Image()
+            sprites[sprite].image.src = sprites[sprite].img
         }
+        console.log(this.sprites)
     }
+
+    
 
     update() {
 
         this.draw()
+        this.animateFrame()
 
         this.attackArea.position.x = this.position.x + this.attackArea.offset.x
         this.attackArea.position.y = this.position.y
