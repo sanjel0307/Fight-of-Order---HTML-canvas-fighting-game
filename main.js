@@ -39,6 +39,10 @@ const player = new fighter({
         walk: {
             img:"./assets/Skeleton/walk.png",
             maxFrames: 4
+        },
+        Attack: {
+            img:"./assets/Skeleton/Attack.png",
+            maxFrames: 8
         }
     }
 })
@@ -95,14 +99,14 @@ function gameLoop() {
     //Player Movement
     player.velocity.x = 0
 
-    player.image = player.sprites.idle.image
+    player.switchSprite("idle")
     if (keys.a.pressed && player.lastKey == 'a' && player.position.x > 0) {
         player.velocity.x = -1
-        player.image = player.sprites.walk.image
+        player.switchSprite("walk")
 
     } else if (keys.d.pressed && player.lastKey == 'd' && player.position.x + player.WIDTH < canvas.width)  {
         player.velocity.x = 1
-        player.image = player.sprites.walk.image
+        player.switchSprite("walk")
     }
 
     //Enemy Movement

@@ -99,9 +99,33 @@ class fighter extends Sprite {
     }
 
     attack () {
+        this.switchSprite("Attack")
         this.isAttacking = true 
         setTimeout(() => {
             this.isAttacking = false
         }, 300)
+    }
+
+    switchSprite(sprite) { 
+        if (this.image === this.sprites.Attack.image && this.currentFrame < this.sprites.Attack.maxFrames - 1) return //Forces priority on attacking animation
+        switch (sprite) {
+            case "idle":
+                if (this.image !== this.sprites.idle.image) {
+                this.image = this.sprites.idle.image
+                this.maxFrames = this.sprites.idle.maxFrames
+                }
+                break
+            case "walk":
+                if (this.image !== this.sprites.walk.image) {
+                this.image = this.sprites.walk.image
+                this.maxFrames = this.sprites.walk.maxFrames
+                }
+                break
+            case "Attack":
+                if (this.image !== this.sprites.Attack.image) {
+                this.image = this.sprites.Attack.image
+                this.maxFrames = this.sprites.Attack.maxFrames
+                }
+        }
     }
 }
